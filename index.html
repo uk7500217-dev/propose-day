@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Propose Day | The Celestial Bond</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --midnight: #020617;
+            --deep-navy: #0f172a;
+            --gold: #fde047;
+            --soft-gold: rgba(253, 224, 71, 0.2);
+            --rose-warm: #fb7185;
+        }
+
+        /* Prevent all scrolling and overscroll behavior */
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            font-family: 'Poppins', sans-serif;
+            background: var(--midnight);
+            overflow: hidden;
+            /* Lock Scroll */
+            touch-action: none;
+            /* Disable gestures */
+            color: white;
+            transition: background 3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Elegant Sunrise - Soft and Warm, not blinding */
+        .sunrise-active {
+            background: radial-gradient(circle at bottom, #450a0a, #1e1b4b, var(--midnight)) !important;
+        }
+
+        #ambient-stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .scene {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            padding: 20px;
+        }
+
+        /* Typography Animations */
+        h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(2.5rem, 8vw, 4rem);
+            margin: 0;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideUpFade 1.5s forwards 0.5s;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .quote {
+            font-size: clamp(0.9rem, 4vw, 1.1rem);
+            font-style: italic;
+            margin: 15px 0;
+            color: #94a3b8;
+            max-width: 500px;
+            opacity: 0;
+            animation: slideUpFade 1.5s forwards 1s;
+        }
+
+        @keyframes slideUpFade {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Heart Container */
+        #constellation-container {
+            width: 320px;
+            height: 320px;
+            position: relative;
+            margin: 30px auto;
+            transition: transform 2s ease-in-out, opacity 1s;
+        }
+
+        .star {
+            width: 8px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 50%;
+            position: absolute;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .star.active {
+            background: var(--gold);
+            box-shadow: 0 0 15px var(--gold), 0 0 30px white;
+            transform: scale(2.2);
+        }
+
+        /* UI Styling & Button Animation */
+        #proposal-ui {
+            display: none;
+            opacity: 0;
+            transition: all 2s ease;
+            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.03);
+            padding: 30px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .show-ui {
+            display: block !important;
+            opacity: 1 !important;
+        }
+
+        .btn-prop {
+            background: linear-gradient(135deg, var(--gold), #fbbf24);
+            color: #451a03;
+            padding: 18px 50px;
+            border: none;
+            border-radius: 100px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            animation: breathe 3s infinite ease-in-out;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(253, 224, 71, 0.3);
+            }
+
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 15px 45px rgba(253, 224, 71, 0.5);
+            }
+        }
+
+        .btn-prop:hover {
+            transform: scale(1.1) translateY(-3px);
+        }
+
+        .instruction {
+            font-size: 0.7rem;
+            letter-spacing: 4px;
+            opacity: 0.5;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="ambient-stars"></canvas>
+
+    <audio id="nightMusic" loop>
+        <source src="I wanna be yours ringtone by Geby120908 - Download on ZEDGE™ - 2fe3.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="scene">
+        <div id="intro-area">
+            <h1>The Celestial Truth</h1>
+            <p class="quote">"In a sea of people, my eyes will always search for you among the stars."</p>
+            <p class="instruction">Glide over the heart to awaken our destiny</p>
+        </div>
+
+        <div id="constellation-container"></div>
+
+        <div id="proposal-ui">
+            <h1 style="font-size: clamp(2rem, 6vw, 3rem); color: var(--gold);">Will You Be My Valentine?</h1>
+            <p style="color: #e2e8f0; margin-top: 10px;">Every heartbeat of mine belongs to you.</p>
+            <button class="btn-prop" onclick="finalCelebrate()">YES, FOREVER</button>
+        </div>
+    </div>
+
+    <script>
+        const container = document.getElementById('constellation-container');
+        const ambCanvas = document.getElementById('ambient-stars');
+        const totalStars = 50;
+        let activatedCount = 0;
+        let starElements = [];
+
+        // 1. Refined Ambient Background
+        function initAmbient() {
+            ambCanvas.width = window.innerWidth;
+            ambCanvas.height = window.innerHeight;
+            const ctx = ambCanvas.getContext('2d');
+            for (let i = 0; i < 180; i++) {
+                const x = Math.random() * ambCanvas.width;
+                const y = Math.random() * ambCanvas.height;
+                const radius = Math.random() * 1.2;
+                ctx.fillStyle = "white";
+                ctx.globalAlpha = Math.random() * 0.7;
+                ctx.beginPath();
+                ctx.arc(x, y, radius, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // 2. The Perfect Heart Generation
+        function generateHeart() {
+            for (let i = 0; i < totalStars; i++) {
+                const t = (i / totalStars) * 2 * Math.PI;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+
+                const star = document.createElement('div');
+                star.className = 'star';
+                // Perfectly centered scaling
+                star.style.left = `${(x * 9) + 160}px`;
+                star.style.top = `${(y * 9) + 150}px`;
+
+                container.appendChild(star);
+                starElements.push(star);
+            }
+        }
+
+        // 3. Smooth Interaction (Magnet Logic)
+        function handleMove(mx, my) {
+            starElements.forEach(star => {
+                const rect = star.getBoundingClientRect();
+                const dist = Math.hypot(mx - (rect.left + 4), my - (rect.top + 4));
+
+                if (dist < 40 && !star.classList.contains('active')) {
+                    star.classList.add('active');
+                    activatedCount++;
+                    document.getElementById('nightMusic').play().catch(() => { });
+                    if (activatedCount >= totalStars) transitionToProposal();
+                }
+            });
+        }
+
+        function transitionToProposal() {
+            document.body.classList.add('sunrise-active');
+            document.getElementById('intro-area').style.opacity = '0';
+            document.getElementById('intro-area').style.transition = 'opacity 2s ease';
+
+            setTimeout(() => {
+                document.getElementById('intro-area').style.display = 'none';
+                document.getElementById('constellation-container').style.transform = 'scale(0.6) translateY(-100px)';
+                document.getElementById('proposal-ui').classList.add('show-ui');
+                confetti({
+                    particleCount: 150,
+                    spread: 70,
+                    origin: { y: 0.8 },
+                    colors: ['#fde047', '#ffffff']
+                });
+            }, 1000);
+        }
+
+        function finalCelebrate() {
+            confetti({ particleCount: 400, spread: 120, origin: { y: 0.7 } });
+            document.querySelector('#proposal-ui h1').innerText = "You're My Everything! ❤️";
+            document.querySelector('#proposal-ui p').innerText = "I Am Not There With You, But I Will Try My Best To Make You Happy From Here...I Hope I Can. I LOVE YOU.";
+        }
+
+        // Event Listeners
+        window.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
+        window.addEventListener('touchmove', e => handleMove(e.touches[0].clientX, e.touches[0].clientY));
+        window.addEventListener('resize', initAmbient);
+        window.onload = () => { initAmbient(); generateHeart(); };
+
+    </script>
+</body>
+
+</html>
